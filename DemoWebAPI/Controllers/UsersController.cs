@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DemoWebAPI.Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DemoWebAPI.Controllers;
 
@@ -22,6 +24,7 @@ public class UsersController : ControllerBase
 
     // GET api/<UsersController>/5
     [HttpGet("{id}")]
+    [Authorize(Policy = PolicyConstants.MustBeTheOwner)]
     public string Get(int id)
     {
         return _config.GetConnectionString("DefaultConnection");

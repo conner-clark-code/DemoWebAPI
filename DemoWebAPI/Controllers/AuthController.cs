@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -18,10 +19,11 @@ namespace DemoWebAPI.Controllers
             Config = config;
         }
         public record AuthData(string? UserName, string? Password);
-        public record UserData(int Id, string UserName);
+        public record UserData(int Id, string UserName, string Title, string EmployeeId);
 
         // POST: api/Auth/token
         [HttpPost("token")]
+        [AllowAnonymous]
         public ActionResult<string> Authenticate([FromBody] AuthData loginData)
         {
 
@@ -53,7 +55,9 @@ namespace DemoWebAPI.Controllers
             List<Claim> claims =
             [
                 new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new(JwtRegisteredClaimNames.UniqueName, user.UserName)
+                new(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new("title", user.Title),
+                new("employeeId", user.EmployeeId)
             ];
 
             var token = new JwtSecurityToken(
@@ -81,7 +85,7 @@ namespace DemoWebAPI.Controllers
             }
 
             // Credentials are valid make token
-            return new UserData(new Random().Next(1, 1000), userData.UserName);
+            return new UserData(new Random().Next(1, 1000), userData.UserName, "Business Owner", "E0001");
         }
     }
 }
