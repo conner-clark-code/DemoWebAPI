@@ -24,7 +24,17 @@ namespace DemoWebAPI.Controllers
         [HttpPost("token")]
         public ActionResult<string> Authenticate([FromBody] AuthData loginData)
         {
-            return ValidateCredentials(loginData);
+
+            var user =  ValidateCredentials(loginData);
+
+            if (user is null)
+            {
+                return Unauthorized();
+            }
+
+            var GeneratedToken = GenerateToken(user);
+
+            return Ok(GeneratedToken);
         }
 
         private string GenerateToken(UserData user)
@@ -54,6 +64,8 @@ namespace DemoWebAPI.Controllers
                 expires: DateTime.UtcNow.AddMinutes(1),
                 signingCredentials: signingCredentials
             );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         private UserData ValidateCredentials(AuthData userData)
