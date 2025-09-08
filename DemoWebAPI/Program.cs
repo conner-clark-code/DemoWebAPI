@@ -11,6 +11,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddApiVersioning(opts =>
+{
+    opts.AssumeDefaultVersionWhenUnspecified = true;
+    opts.DefaultApiVersion = new(1, 0);
+    opts.ReportApiVersions = true;
+});
 
 // Add Authorization
 builder.Services.AddAuthorization(opts =>
@@ -43,7 +49,7 @@ builder.Services.AddAuthentication("Bearer")
                         ValidIssuer = builder.Configuration.GetValue<string>("Authentication:Issuer"),
                         ValidAudience = builder.Configuration.GetValue<string>("Authentication:Audience"),
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.ASCII.GetBytes(
+                                Encoding.ASCII.GetBytes(
                                 builder.Configuration.GetValue<string>("Authentication:SecretKey") 
                                 ?? throw new InvalidOperationException("Secret key not found in configuration")
                             )

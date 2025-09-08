@@ -1,11 +1,14 @@
-﻿using DemoWebAPI.Constants;
+﻿using Asp.Versioning;
+using DemoWebAPI.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DemoWebAPI.Controllers;
+namespace DemoWebAPI.Controllers.v1;
 
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
+[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 public class UsersController : ControllerBase
 {
     public IConfiguration _config { get; }
@@ -17,6 +20,7 @@ public class UsersController : ControllerBase
 
     // GET: api/<UsersController>
     [HttpGet]
+    [AllowAnonymous]
     public IEnumerable<string> Get()
     {
         return ["value1", "value2"];
